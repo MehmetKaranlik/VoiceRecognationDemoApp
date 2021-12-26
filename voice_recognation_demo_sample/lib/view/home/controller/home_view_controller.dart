@@ -42,7 +42,7 @@ class HomeViewController extends GetxController {
 
   void _onSpeechResult(SpeechRecognitionResult result) {
     if (getValidateRobotName(result)) {
-      speechText = result.recognizedWords.replaceAll('tavuk', '');
+      speechText = result.recognizedWords.replaceAll(_localeManager.getStringValue(PreferencesKeys.ROBOT_NAME), '');
     }
     stopListening();
   }
