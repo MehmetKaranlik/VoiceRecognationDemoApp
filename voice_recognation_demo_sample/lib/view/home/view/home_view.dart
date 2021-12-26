@@ -9,40 +9,52 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        floatingActionButton: FloatingActionButton(
-          child: Obx(() => _controller.isListening ? Icon(Icons.mic_off) : Icon(Icons.mic)),
-          onPressed: () => _controller.startListening(),
-        ),
+        floatingActionButton: _buildFab(),
         body: SingleChildScrollView(
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.max,
               children: [
-                SizedBox(
+                const SizedBox(
                   height: 100,
                 ),
-                Center(
-                  child: Obx(
-                    () => Image.network(
-                      _controller.getCatURL(_controller.speechText),
-                      fit: BoxFit.fill,
-                      loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                        if (loadingProgress == null) return child;
-                        return Center(
-                          child: CircularProgressIndicator(
-                            value: loadingProgress.expectedTotalBytes != null
-                                ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
-                                : null,
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ),
+                _buildCatImage(),
               ],
             ),
           ),
         ));
+  }
+
+  FloatingActionButton _buildFab() {
+    return FloatingActionButton(
+      child: Obx(() => _controller.isListening ? Icon(Icons.mic_off) : Icon(Icons.mic)),
+      onPressed: () => _controller.startListening(),
+    );
+  }
+
+  Center _buildCatImage() {
+    return Center(
+      child: Obx(
+        () => Image.network(
+          _controller.getCatURL(_controller.speechText),
+          fit: BoxFit.fill,
+          loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+            if (loadingProgress == null) return child;
+            return _buildLoadingIndicator(loadingProgress);
+          },
+        ),
+      ),
+    );
+  }
+
+  Center _buildLoadingIndicator(ImageChunkEvent loadingProgress) {
+    return Center(
+            child: CircularProgressIndicator(
+              value: loadingProgress.expectedTotalBytes != null
+                  ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                  : null,
+            ),
+          );
   }
 }

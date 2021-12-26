@@ -16,40 +16,57 @@ class OnboardingView extends StatelessWidget {
           SizedBox(
             height: 40.h,
           ),
-          SizedBox(
-              width: 80.w,
-              child: TextFormField(
-                decoration: InputDecoration(
-                  hintText: "Robot ismi"
-                ),
-                controller: _controller.textController,
-                keyboardType: TextInputType.none,
-              )),
+          _buildTextFormField(),
           SizedBox(
             height: 30.h,
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Obx(() => IconButton(
-                  onPressed: () => _controller.startListening(),
-                  icon: Icon(_controller.isListening ? Icons.mic_off : Icons.mic))),
-              SizedBox(
-                width: 15.w,
-              ),
-              IconButton(onPressed: () => _controller.cacheRobotName(), icon: const Icon(Icons.save)),
-              SizedBox(
-                width: 15.w,
-              ),
-              IconButton(
-                  onPressed: () => _controller.isCacheRobotNameEmpty
-                      ? Get.snackbar("uyarı", "Robot ismi seçilmek zorunda !",snackPosition: SnackPosition.BOTTOM)
-                      : Get.off(() =>  HomeView()),
-                  icon: const Icon(Icons.arrow_forward))
-            ],
-          )
+          _buildButtonRow()
         ],
       ),
     );
+  }
+
+  Row _buildButtonRow() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Obx(() => _buildListenButton()),
+        SizedBox(
+          width: 15.w,
+        ),
+        _buildCacheButton(),
+        SizedBox(
+          width: 15.w,
+        ),
+        _buildForwardButton()
+      ],
+    );
+  }
+
+  IconButton _buildForwardButton() {
+    return IconButton(
+        onPressed: () => _controller.isCacheRobotNameEmpty ? _buildSnackBar() : Get.off(() => HomeView()),
+        icon: const Icon(Icons.arrow_forward));
+  }
+
+  SnackbarController _buildSnackBar() =>
+      Get.snackbar("uyarı", "Robot ismi seçilmek zorunda !", snackPosition: SnackPosition.BOTTOM);
+
+  IconButton _buildCacheButton() =>
+      IconButton(onPressed: () => _controller.cacheRobotName(), icon: const Icon(Icons.save));
+
+  IconButton _buildListenButton() {
+    return IconButton(
+        onPressed: () => _controller.startListening(), icon: Icon(_controller.isListening ? Icons.mic_off : Icons.mic));
+  }
+
+  SizedBox _buildTextFormField() {
+    return SizedBox(
+        width: 80.w,
+        child: TextFormField(
+          decoration: InputDecoration(hintText: "Robot ismi"),
+          controller: _controller.textController,
+          keyboardType: TextInputType.none,
+        ));
   }
 }
